@@ -721,6 +721,9 @@
             help: document.getElementById('btn-help')
         };
 
+		const csv_regex = /(".*?"|[^",]+)(?=\s*,|\s*$)/g;
+		const link_regex = /(https?:\/\/[^\s]+)/g;
+
         // --- INITIALIZATION ---
 
         function init() {
@@ -976,13 +979,13 @@
             let tableHtml = '<table class="preview-content-csv">';
             
             // Process Header Row (First line assumed header)
-            const headerCells = rows[0].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g).map(cell => cell.trim());
+            const headerCells = rows[0].match(csv_regex).map(cell => cell.trim());
             tableHtml += '<tr><th>' + headerCells.map(c => `<div>${c}</div>`).join('</th><th>') + '</tr>';
 
             // Process Data Rows
             for (let i = 1; i < rows.length; i++) {
-                const cells = rows[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-                tableHtml += '<tr><td>' + cells.map(c => c.replace(/(https?:\/\/[^\s]+)/g, url=>'<a href="' + url + '">' + url + '</a>')).join('</td><td>') + '</tr>';
+                const cells = rows[i].match(csv_regex);
+                tableHtml += '<tr><td>' + cells.map(c => c.replace(link_regex, url=>'<a href="' + url + '">' + url + '</a>')).join('</td><td>') + '</tr>';
                 //tableHtml += '<tr><td>' + cells.map(c => `${c}`).join('</td><td>') + '</tr>';
             }
             
@@ -998,15 +1001,15 @@
             let tableHtml = '<table class="preview-content-csvc">';
             
             // Process Header Row (First line assumed header)
-            const headerCells = rows[0].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g).map(cell => cell.trim());
+            const headerCells = rows[0].match(csv_regex).map(cell => cell.trim());
 
             // Process Data Rows
             for (let i = 1; i < rows.length; i++) {
-                const cells = rows[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+                const cells = rows[i].match(csv_regex);
                 tableHtml += `<tr class='header'><td colspan='2'>${cells[0]}</td></tr>`;
                 const ax = headerCells.length > cells.length ? headerCells.length : cells.length;
                 for (let o = 1; o < ax; o++) {
-                	const cellv = (cells[o] ?? "").replace(/(https?:\/\/[^\s]+)/g, url=>'<a href="' + url + '">' + url + '</a>');
+                	const cellv = (cells[o] ?? "").replace(link_regex, url=>'<a href="' + url + '">' + url + '</a>');
                 	const heads = headerCells[o] ?? "";
                     tableHtml += `<tr class='data'><td>${heads}</td><td>${cellv}</td></tr>`;
                 }
@@ -1030,7 +1033,7 @@
                 if (type === 'video') return `<video controls src="${match}" style="width:100%"></video>`;
                 return match;
             });
-            html = html.replace(/(https?:\/\/[^\s]+)/g, url=>'<a href="' + url + '">' + url + '</a>');
+            html = html.replace(link_regex, url=>'<a href="' + url + '">' + url + '</a>');
             return html.replace(/\n/g, '<br>');
         }
 

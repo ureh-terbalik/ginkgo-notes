@@ -6,7 +6,7 @@
 - Easy to self-hosted (you don't even need a server, just open index.html with a browser)
 - Can export (download) and import (upload) backup in a compressed (gzip) json file
 - Persistent light/dark mode
-- Use [Ace Editor](https://ace.c9.io)
+- Use [Ace Editor](https://ace.c9.io) via jsdelivr.net
 - Highly configurable via source-code :)
 
 It have two panel, left for item explorer (user can create file and folder) and right panel for item preview. The preview support following format (recognized by file extension):
@@ -18,3 +18,4 @@ It have two panel, left for item explorer (user can create file and folder) and 
 - Hybrid Text, it's a text file that can embed image/sound/video in base64 format, there's a button in editor for inserting media (consider localStorage limitation)
 - Any other file will be treated as hybrid text file
 
+In CSV, CSVC, and Hybrid Text, all http/https addresses automatic converted to links.
