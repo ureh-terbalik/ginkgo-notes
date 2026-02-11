@@ -736,7 +736,7 @@
 
         // --- DATA MANAGEMENT ---
         function displayInfo(data,comp) {
-			document.getElementById('sinfo').innerHTML = 'Data: '+(data.length/1024).toFixed(2)+' KB / localStorage: '+(comp.length/1024).toFixed(2)+' KB';
+			document.getElementById('sinfo').innerHTML = 'Data: '+(data.length/1024).toFixed(2)+' KB &bull; localStorage: '+(comp.length/1024).toFixed(2)+' KB';
         }
 		async function compressString(str, encoding = 'gzip') {
 		    const byteArray = new TextEncoder().encode(str);
@@ -1373,6 +1373,18 @@
             Editor.setValue(item.content,-1);
             Editor.focus();
 
+			Editor.commands.addCommand({
+			    name: 'save-edit',
+			    bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+			    exec: function(editor) {
+					// e.preventDefault(); saveEditorContent();
+			        saveEditorContent();
+			    },
+			    readOnly: false, // false if this command should not apply in readOnly mode
+			    // multiSelectAction: "forEach", optional way to control behavior with multiple cursors
+			    // scrollIntoView: "cursor", control how cursor is scolled into view after the command
+			});
+
             if (ext === 'txt') {
                 btnInsertMedia.style.display = 'flex';
             } else {
@@ -1587,10 +1599,12 @@
             document.getElementById('btn-close-editor').addEventListener('click', closeEditor);
             document.getElementById('btn-cancel-edit').addEventListener('click', closeEditor);
             document.getElementById('btn-save-edit').addEventListener('click', saveEditorContent);
-            
+
+            /*
             editorTextarea.addEventListener('keydown', (e) => {
                 if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveEditorContent(); }
             });
+            */
 
             btnInsertMedia.addEventListener('click', insertMediaBase64);
 
