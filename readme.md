@@ -18,4 +18,4 @@ It have two panel, left for item explorer (user can create file and folder) and 
 - Hybrid Text, it's a text file that can embed image/sound/video in base64 format, there's a button in editor for inserting media (consider localStorage limitation)
 - Any other file will be treated as hybrid text file
 
-In CSV, CSVC, and Hybrid Text, all http/https addresses automatic converted to links.
+In CSV, CSVC, and Hybrid Text, all http/https addresses automatically converted to links.

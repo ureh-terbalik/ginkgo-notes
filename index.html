@@ -724,6 +724,8 @@
 		const csv_regex = /(".*?"|[^",]+)(?=\s*,|\s*$)/g;
 		const link_regex = /(https?:\/\/[^\s]+)/g;
 
+		ace.config.set("basePath", "https://cdn.jsdelivr.net/npm/ace-builds@1.43.6/src-min-noconflict/");
+
         // --- INITIALIZATION ---
 
         function init() {
@@ -1351,39 +1353,71 @@
         }
 
         // --- EDITOR LOGIC & HYBRID TEXT ---
-        Editor = null;
+        //Editor = null;
+        Editor = ace.edit("editor");
+        Editor.setOptions({
+			fontSize: "8pt",
+			fontFamily: "D2CodingLigature Nerd Font Mono", // "IosevkaTermSlab NF",
+			newLineMode: "auto",
+			tabSize: 4,
+			useSoftTabs: true,
+			navigateWithinSoftTabs: true,
+        });
+		Editor.commands.addCommand({
+			name: 'save-edit',
+			bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+			exec: function(editor) {
+				// e.preventDefault(); saveEditorContent();
+				saveEditorContent();
+			},
+			readOnly: false, // false if this command should not apply in readOnly mode
+			// multiSelectAction: "forEach", optional way to control behavior with multiple cursors
+			// scrollIntoView: "cursor", control how cursor is scolled into view after the command
+		});
+		ace_extmap = {
+			bas: "basic",      go: "golang",      pas: "pascal",
+			bat: "batchfile",  htm: "html",       php: "php",
+			c: "c_cpp",        html: "html",      py: "python",
+			cpp: "c_cpp",      ini: "ini",        sh: "sh",
+			cs: "csharp",      java: "java",      sql: "sql",
+			css: "css",        js: "javascript",  vbs: "vbscript",
+			csv: "csv",        json: "json",      xml: "xml",
+			csvc: "csv",       md: "markdown",    yaml: "yaml",
+		};
+		theme_light = [
+			"Chrome", "Cloud Editor", "Clouds","Crimson Editor","Dawn","Dreamweaver","Eclipse","Github Light Default",
+			"Github","IPlastic","KatzenMilch","Kuroir","Solarized Light","SQL Server","TextMate","Tomorrow","XKode"
+		];
+		theme_dark = [
+			"Ambiance","Chaos","Cloud Editor Dark","Clouds Midnight","Cobalt","Dracula","GitHub Dark","Green on Black","Gruvbox",
+			"Idle Fingers","krTheme","Merbivore","Merbivore Soft","Mono Industrial","Monokai","Nord Dark","One Dark",
+			"Pastel on dark","Solarized Dark","Terminal","Tomorrow Night","Tomorrow Night Blue","Tomorrow Night Bright",
+			"Tomorrow Night 80s","Twilight","Vibrant Ink"
+		];
+
         function openEditor() {
             const item = getItemById(AppState.selectedId);
             if (!item || item.type !== 'file') return;
 
             const ext = getFileExtension(item.name);
             
+            if (AppState.theme == "light") {
+            	Editor.setTheme("ace/theme/xcode");
+            } else {
+            	Editor.setTheme("ace/theme/terminal");
+            }
+
+			Editor.session.setMode("ace/mode/"+(ace_extmap[ext]??"text"));
+			/*
+            if (ext == 'js') Editor.session.setMode("ace/mode/javascript");
+            if (ext == 'md') Editor.session.setMode("ace/mode/markdown");
+            */
+
             document.getElementById('editor-title').textContent = `Editing: ${item.name}`;
-            //editorTextarea.value = item.content;
             editorModal.classList.add('open');
-            //editorTextarea.focus();
-            //document.getElementById("editor").textContent = item.content;
-            Editor = ace.edit("editor");
-            Editor.setOptions({
-            	fontSize: "8pt",
-            	fontFamily: "D2CodingLigature Nerd Font Mono", // "IosevkaTermSlab NF",
-            	newLineMode: "auto",
-            	theme: AppState.theme == "light" ? "ace/theme/one-light" : "ace/theme/one-dark",
-            });
+
             Editor.setValue(item.content,-1);
             Editor.focus();
-
-			Editor.commands.addCommand({
-			    name: 'save-edit',
-			    bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
-			    exec: function(editor) {
-					// e.preventDefault(); saveEditorContent();
-			        saveEditorContent();
-			    },
-			    readOnly: false, // false if this command should not apply in readOnly mode
-			    // multiSelectAction: "forEach", optional way to control behavior with multiple cursors
-			    // scrollIntoView: "cursor", control how cursor is scolled into view after the command
-			});
 
             if (ext === 'txt') {
                 btnInsertMedia.style.display = 'flex';
